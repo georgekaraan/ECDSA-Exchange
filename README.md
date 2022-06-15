@@ -4,26 +4,28 @@ Uses [noble-secp256k1](https://github.com/paulmillr/noble-secp256k1) instead of 
 
 # Flow of Application
 
-1. Run `npm install` to pull down any required dependencies!
+1. Install Dependencies
+
+Run `npm install` 
 
 2. Start server
 
-Run `node server/index.js` in order to start server and receive 3 public-private key account combinations
+Run `node server/index.js` in order to start server. 
+
+You will receive 3 public-private key account combinations, with different balances.
 
 3. Start parcel application
 
-Run `npx parcel client/index.js` in order to start application at default localhost:1234
+Run `npx parcel client/index.html` in order to start application at default localhost:1234
 
-4. Use `signatureOffline.js` to produce a digital signature OFFLINE
+4. Use `offlineSignature.js` to produce a digital signature offline.
 
 Pass in the correct values, the ones from your current server!
 
-Run `node signatureOffline` in order to get your `signature` and your `recoveryBit` (not required to pass into application)
+Run `node offlineSignature` in order to get your `signature` 
 
-5. In the `Provide Signature + Transfer Amount` section, provide signature + other details needed (recipient, amount)
-
-These must match what you originally signed, otherwise the transfer will fail!
+5. In the `Send Funds to Wallet` section, provide signature + other details needed (recipient, amount)
 
 6. Hit `Transfer Amount`
 
-7. If you followed the above flow, your digital signature should have been properly verified and the amount should have transfered!
+7. You can check if the balances have been modified by plugging in the public key of the sender or receiver in the 'Check Balances' section

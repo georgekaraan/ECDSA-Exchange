@@ -75,7 +75,6 @@ app.post('/send', (req, res) => {
   const signatureInUint8 = Uint8Array.from(Buffer.from(signature, 'hex'));
 
   // hash the independent message
-  // this is where the magic happens!
   const messageHash = bytesToHex(keccak_256(message));
 
   // recover the public key 1 (just like Ethereum does it) using msgHash, sig
@@ -86,59 +85,59 @@ app.post('/send', (req, res) => {
   // recoveryBit = 1
   let recoveredPublicKey2 = secp.recoverPublicKey(messageHash, signature, 1);
 
-  // clean up numbers so that they look
-  // like the ones in your server.js
+
   let realKey;
   let saveKey1 = recoveredPublicKey1;
   let saveKey2 = recoveredPublicKey2;
+
+  //convert to str and then slice as ETH does
   recoveredPublicKey1 = Buffer.from(recoveredPublicKey1).toString('hex');
   recoveredPublicKey1 = "0x" + recoveredPublicKey1.slice(recoveredPublicKey1.length - 40);
+  //convert to str and then slice as ETH does
   recoveredPublicKey2 = Buffer.from(recoveredPublicKey2).toString('hex');
   recoveredPublicKey2 = "0x" + recoveredPublicKey2.slice(recoveredPublicKey2.length - 40);
 
   // log both options to console
   console.log();
-  console.log("Recovered PK 1: " + recoveredPublicKey1);
-  console.log("Recovered PK 2: " + recoveredPublicKey2);
+  console.log("Recovered Public Key (recovery 0): " + recoveredPublicKey1);
+  console.log("Recovered Public Key (recovery 1): " + recoveredPublicKey2);
   console.log();
 
-  // so far, none of our two options have been checked
-  let publicKeyMatch = false;
+  // set to false before we check our recoveredPublicKeys
+  let pKMatch = false;
 
   // we must declare a TRUE recovered public key!
   // find a match in our server
   let recoveredPublicKey;
 
-  // if either of public keys match an entry in our server, proceed,
-  // else mark `publicKeyMatch` false and return, no change
+  // check if there is no match
   if (!balances[recoveredPublicKey1] && !balances[recoveredPublicKey2]) {
     console.log();
     console.error("Public key does not match! Make sure you are passing in the correct values!");
     console.log();
-    publicKeyMatch = false;
+    pKMatch = false;
     logBalances();
     return;
+    // check if there is a match !
   } else if (!balances[recoveredPublicKey1] && balances[recoveredPublicKey2]) {
     recoveredPublicKey = recoveredPublicKey2;
     realKey = saveKey2;
-    publicKeyMatch = true;
+    pKMatch = true;
   } else if (!balances[recoveredPublicKey2] && balances[recoveredPublicKey1]) {
     recoveredPublicKey = recoveredPublicKey1;
     realKey = saveKey1;
-    publicKeyMatch = true;
+    pKMatch = true;
   }
 
   // console log event
   console.log();
   console.log(recoveredPublicKey + " is attempting to send " + amount + " to " + recipient);
   console.log();
+  console.log();
 
-  // this means we have verified that the
-  // private key behind this publicKey wishes
-  // to enact a valid change to the server.js table
-  // no other way to produce match other than to own private key
+  // check if there is a match and then if sender has enough funds
   if (publicKeyMatch && secp.verify(signature, messageHash, realKey)) {
-    // require owner has sufficient balance, else return
+    // check to see if the sender has suficient funds in balance
     if (balances[recoveredPublicKey] - amount >= 0) {
       balances[recoveredPublicKey] -= amount;
       balances[recipient] = (balances[recipient] || 0) + +amount;
@@ -147,7 +146,7 @@ app.post('/send', (req, res) => {
       console.log();
       console.log(recoveredPublicKey + " has successfully sent " + amount + " to " + recipient);
       console.log();
-      // after every action, display 
+      // display balances after successful transfer
       logBalances();
     } else {
       console.log();
