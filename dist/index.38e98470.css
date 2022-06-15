@@ -1,0 +1,55 @@
+body {
+  font-family: Muli, sans-serif;
+  font-weight: 300;
+}
+
+input {
+  border-radius: 5px;
+  padding: 9px 25px;
+}
+
+#balance {
+  background-color: #fff;
+  border: 1px solid #000;
+  margin: 10px 0;
+  padding: 5px 0;
+}
+
+#balance:before {
+  content: "Balance:";
+}
+
+.components {
+  flex-wrap: wrap;
+  display: flex;
+}
+
+.components > div {
+  text-align: center;
+  background-color: #eee;
+  border-radius: 10px;
+  margin: 20px;
+  padding: 30px 50px;
+}
+
+.components > div h1 {
+  margin: 0 0 20px;
+}
+
+.button {
+  letter-spacing: .7px;
+  color: #fff;
+  background-color: #3527f5;
+  border: none;
+  border-radius: 5px;
+  padding: 9px 25px;
+  font-size: .9em;
+  font-weight: bold;
+  display: inline-block;
+}
+
+.button:hover {
+  cursor: pointer;
+}
+
+/*# sourceMappingURL=index.38e98470.css.map */
